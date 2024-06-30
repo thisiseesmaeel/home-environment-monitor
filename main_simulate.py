@@ -25,7 +25,7 @@ humid_warning_range = (35, 65)  # Warning humidity range in percentage
 light_warning_range = (10000, 50000)  # Warning light level range
 
 # Simulation flag
-simulate = False
+simulate = True
 
 
 # Time-based light thresholds

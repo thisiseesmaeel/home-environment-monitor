@@ -9,4 +9,4 @@ def connect_to_wifi():
         wlan.connect(WIFI_SSID, WIFI_PASS)
         while not wlan.isconnected():
             pass
-    print('WiFi connected:', wlan.ifconfig())
+    print('WiFi connected:', wlan.ifconfig()[0])
