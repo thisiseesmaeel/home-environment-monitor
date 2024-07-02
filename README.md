@@ -278,9 +278,8 @@ Switches between automatic and manual LED control modes.
 `start_server(port=80)`
 Initializes and runs the web server, handling incoming connections and serving the dashboard.
 
-### Simulation-Capable Version
-
-This version includes additional features for testing and demonstration:
+## Simulation-Capable Version
+This version includes additional features for testing and demonstration, with the ability to switch between simulated and real sensor data:
 
 ```python
 import machine
@@ -301,7 +300,7 @@ humid_warning_range = (35, 65)
 light_warning_range = (10000, 50000)
 
 # Simulation flag
-simulate = False
+simulate = True
 
 # Time-based light thresholds
 daytime_light_range = (20000, 40000)
@@ -322,33 +321,48 @@ def simulate_values():
     # Simulation logic here
     pass
 
-# Main loop with simulation option
+# Main loop with option to use real or simulated data
+while True:
+    try:
+        if simulate:
+            temp, humid, light = simulate_values()
+        else:
+            # Read from physical sensors
+            dht_sensor.measure()
+            temp = dht_sensor.temperature()
+            humid = dht_sensor.humidity()
+            light = photoresistor.read_u16()
+
+        print(f"Temperature: {temp:.1f}°C, Humidity: {humid:.1f}%, Light: {light}")
+        print(f"Current period: {'Daytime' if is_daytime() else 'Nighttime'}")
+
+        # Control LEDs based on conditions
+        led_status = control_leds(temp, humid, light)
+        print(f"LED Status: {led_status}")
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+    time.sleep(2)  # Wait for 2 seconds before reading again
 ```
-
-
 ### Key Features of the Simulation-Capable Version:
 
-1. **Time-based Light Thresholds:**
-This version adjusts light level expectations based on the time of day.
-2. **Simulation Mode:**
-A simulate flag allows the system to generate mock sensor data for testing purposes.
-3. **Enhanced LED Control:**
-The LED status is determined by more nuanced conditions, including time-of-day considerations for light levels.
-4. **Error Handling:**
-The main loop includes exception handling to manage potential errors gracefully.
+**Dual Functionality:** Can switch between simulated data and real sensor readings using the simulate flag.
+**Time-based Light Thresholds:** Adjusts light level expectations based on the time of day.
+**Simulation Mode:** When active, generates mock sensor data for testing purposes.
+**Enhanced LED Control:** The LED status is determined by more nuanced conditions, including time-of-day considerations for light levels.
+**Error Handling:** The main loop includes exception handling to manage potential errors gracefully.
 
 ### Key Functions in the Simulation Version
 `is_daytime()`
 Determines if it's currently daytime (6 AM to 8 PM) based on the system's current hour.
-
 `get_light_thresholds()`
 Returns appropriate light level thresholds based on whether it's daytime or nighttime.
-
 `control_leds(temp, humid, light)`
 Sets the LED status based on how closely the current conditions match the ideal ranges, considering the time of day for light levels.
-
 `simulate_values()`
 When simulation mode is active, this function generates realistic mock data for temperature, humidity, and light levels.
+
 
 ## Adafruit IO and MQTT Version
 This version integrates with Adafruit IO using MQTT for cloud-based data storage and control. Here's an overview of the key components:
@@ -487,9 +501,15 @@ This project has three variants, each with its own approach to data transmission
    - **Data Flow:** Sensor data is read locally and served through a web server hosted on the Raspberry Pi Pico WH.
 
 2. **Simulation-Capable Version**
-   - Simulates sensor data locally
-   - Uses the same Wi-Fi and HTTP setup as the main version
-   - Allows testing of various environmental conditions without physical sensors
+   - **Data Source:** Can switch between simulated data and real sensor readings
+   - **Wireless Protocol:** Wi-Fi (client mode)
+   - **Transport Protocol:** HTTP
+   - **Frequency:** Updates every 2 seconds (configurable)
+   - **Data Flow:** 
+     - When using real sensors: Data is read from physical sensors
+     - When simulating: Data is generated locally
+   - Uses the same web server setup as the main version
+   - Allows testing of various environmental conditions with or without physical sensors
 
 3. **Adafruit IO and MQTT Version**
    - **Wireless Protocol:** Wi-Fi (client mode)
