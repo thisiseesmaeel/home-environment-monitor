@@ -467,9 +467,6 @@ Connects the Pico to your local WiFi network.
 `send_to_adafruit(client, temp, humid, light)`
 Publishes sensor data to Adafruit IO using MQTT.
 
-`send_to_discord(temp, humid, light)`
-Sends sensor data as a message to your Discord channel.
-
 `update_mode_indicator()`
 Updates the mode (AUTO/MANUAL) on the Adafruit IO dashboard.
 
@@ -505,7 +502,7 @@ This project has three variants, each with its own approach to data transmission
    - **Wireless Protocol:** Wi-Fi (client mode)
    - **Transport Protocol:** HTTP
    - **Frequency:** Updates every 2 seconds (configurable)
-   - **Data Flow:** 
+   - **Data Flow:**
      - When using real sensors: Data is read from physical sensors
      - When simulating: Data is generated locally
    - Uses the same web server setup as the main version
@@ -545,7 +542,7 @@ This project has three variants, each with its own approach to data transmission
 
 ### Dashboard Visuals
 ![Local Dashboard](images/dashboard.png)
-*Local web dashboard for main and simulation versions*
+*Local web dashboard for main project version*
 
 ![Adafruit IO Dashboard](images/adafruit.png)
 *Adafruit IO dashboard*
